@@ -1,4 +1,4 @@
-$scriptVersion = "v1"
+$scriptVersion = "v2"
 . $PSScriptRoot\ScriptConfig.ps1
 function Select-NewMPVersion {
     $lastVersion = Get-Content -Path "$PSScriptRoot/beta/lastVersion.txt"
@@ -24,9 +24,8 @@ function Select-MCVersion {
 Write-Host "[PackFrameworker Script $scriptVersion]" -ForegroundColor Green
 Write-Host "Select action to do:"
 Write-Host
-Write-Host "1) Build all versions"
-Write-Host "2) Build Ultra"
-Write-Host "3) Build Nano"
+Write-Host "1) Build"
+Write-Host "2) Copy Beta to Release folders"
 Write-Host
 Write-Host "0) Exit"
 Write-Host
@@ -50,27 +49,16 @@ switch ($selectedMCVersion) {
         $modpacktype = "nano"
         Build-Modpack
 
-        exit 
+        $modpacktype = "server"
+        Build-Modpack
+
+        Select-MCVersion
     }
     "2" {
-        # Set the variables for the modpack to be built
-        $modpacktype = "ultra"
-
-        # Build the modpack
-        Select-NewMPVersion
-        Update-PackFramework
-        Build-Modpack
-        Select-MCVersion
-    }
-    "3" {
-        # Set the variables for the modpack to be built
-        $modpacktype = "nano"
-
-        # Build the modpack
-        Select-NewMPVersion
-        Update-PackFramework
-        Build-Modpack
-        Select-MCVersion
+        # 2) Copy Beta to Release folders
+        Remove-Item -Path "release" -Recurse -Include *.*
+        Copy-Item -Path "beta\*" -Destination "release" -Recurse -Force
+        Remove-Item -Path "release\lastVersion.txt"
     }
     default {
         Write-Host "I’m sorry, but it seems you’ve selected the wrong option." -ForegroundColor Red
@@ -94,14 +82,16 @@ function Build-Modpack {
         New-Item -ItemType Directory -Path $outputPath
     }
     # Merge the necessary files into the output path
-    Write-Host "[$(Get-Date -Format 'mm:ss')] Merging..."
-    Copy-Item -Path "$PSScriptRoot\framework\$frameworkChannel\$modloader\$mcversion\$modpacktype\*" -Destination "$outputPath" -Recurse -Force
-    Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\nano\*" -Destination "$outputPath" -Recurse -Force
-    if ($modpacktype -eq 'ultra') {
-        if (Test-Path -Path "$PSScriptRoot\mod\$modloader\shared\ultra") {
-            Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\ultra\*" -Destination "$outputPath" -Recurse -Force
-        }
+    if ($modpacktype -eq 'server' -or $modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
+        Copy-Item -Path "$PSScriptRoot\framework\$frameworkChannel\$modloader\$mcversion\$modpacktype\*" -Destination "$outputPath" -Recurse -Force
+        Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\server\*" -Destination "$outputPath" -Recurse -Force
     }
+    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
+        Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\nano\*" -Destination "$outputPath" -Recurse -Force
+        if ($modpacktype -eq 'ultra') {
+            Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\ultra\*" -Destination "$outputPath" -Recurse -Force
+            }
+            }
 
     # Remove files from the list
     if (Test-Path -Path "$outputPath\filesToRemove.txt" -PathType leaf) {
@@ -116,12 +106,14 @@ function Build-Modpack {
     Write-Host "[$(Get-Date -Format 'mm:ss')] Changing versions..."
     
     (Get-Content "$outputPath/pack.toml") | ForEach-Object { $_ -replace "noVersion", "$global:selectedMPVersion" } | Set-Content "$outputPath/pack.toml"
+    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
     (Get-Content "$outputPath/config/fancymenu/custom_locals/mod/en_us.local") | ForEach-Object { $_ -replace "noVersion", "$global:selectedMPVersion" } | Set-Content "$outputPath/config/fancymenu/custom_locals/mod/en_us.local"
-
+    }
     # Copy the changelog to the output path
+    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
     Write-Host "[$(Get-Date -Format 'mm:ss')] Copying Changelog..."
     Copy-Item "$PSScriptRoot\CHANGELOG.md" "$outputPath\config\fancymenu\assets\changelog.md"
-
+    }
     # Update the modpack using packwiz
     Write-Host "[$(Get-Date -Format 'mm:ss')] Refreshing..."
     Set-Location "$outputPath"
