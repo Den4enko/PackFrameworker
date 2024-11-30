@@ -1,4 +1,4 @@
-$scriptVersion = "v2"
+$scriptVersion = "v3"
 . $PSScriptRoot\ScriptConfig.ps1
 function Select-NewMPVersion {
     $lastVersion = Get-Content -Path "$PSScriptRoot/beta/lastVersion.txt"
@@ -43,7 +43,7 @@ switch ($selectedMCVersion) {
         Select-NewMPVersion
         Update-PackFramework
 
-        $modpacktype = "ultra"
+        $modpacktype = "giga"
         Build-Modpack
 
         $modpacktype = "nano"
@@ -82,14 +82,14 @@ function Build-Modpack {
         New-Item -ItemType Directory -Path $outputPath
     }
     # Merge the necessary files into the output path
-    if ($modpacktype -eq 'server' -or $modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
-        Copy-Item -Path "$PSScriptRoot\framework\$frameworkChannel\$modloader\$mcversion\$modpacktype\*" -Destination "$outputPath" -Recurse -Force
-        Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\server\*" -Destination "$outputPath" -Recurse -Force
+    if ($modpacktype -eq 'server' -or $modpacktype -eq 'nano' -or $modpacktype -eq 'giga') {
+        Copy-Item -Path "$PSScriptRoot\framework\packwiz\$modloader\$mcversion\$modpacktype\*" -Destination "$outputPath" -Recurse -Force
+        Copy-Item -Path "$PSScriptRoot\mod\$modloader\all\server\*" -Destination "$outputPath" -Recurse -Force
     }
-    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
-        Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\nano\*" -Destination "$outputPath" -Recurse -Force
-        if ($modpacktype -eq 'ultra') {
-            Copy-Item -Path "$PSScriptRoot\mod\$modloader\shared\ultra\*" -Destination "$outputPath" -Recurse -Force
+    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'giga') {
+        Copy-Item -Path "$PSScriptRoot\mod\$modloader\all\nano\*" -Destination "$outputPath" -Recurse -Force
+        if ($modpacktype -eq 'giga') {
+            Copy-Item -Path "$PSScriptRoot\mod\$modloader\all\giga\*" -Destination "$outputPath" -Recurse -Force
             }
             }
 
@@ -106,11 +106,11 @@ function Build-Modpack {
     Write-Host "[$(Get-Date -Format 'mm:ss')] Changing versions..."
     
     (Get-Content "$outputPath/pack.toml") | ForEach-Object { $_ -replace "noVersion", "$global:selectedMPVersion" } | Set-Content "$outputPath/pack.toml"
-    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
+    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'giga') {
     (Get-Content "$outputPath/config/fancymenu/custom_locals/mod/en_us.local") | ForEach-Object { $_ -replace "noVersion", "$global:selectedMPVersion" } | Set-Content "$outputPath/config/fancymenu/custom_locals/mod/en_us.local"
     }
     # Copy the changelog to the output path
-    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'ultra') {
+    if ($modpacktype -eq 'nano' -or $modpacktype -eq 'giga') {
     Write-Host "[$(Get-Date -Format 'mm:ss')] Copying Changelog..."
     Copy-Item "$PSScriptRoot\CHANGELOG.md" "$outputPath\config\fancymenu\assets\changelog.md"
     }
