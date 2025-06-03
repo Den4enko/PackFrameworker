@@ -11,14 +11,11 @@ PackFrameworker is a script that automates building and updating Minecraft modpa
 
 ## Requirements
 
-- **Python 3.8+**  
-  [Official Python Website](https://www.python.org/)
+- **Python 3.8+**
 
-- **Git**  
-  [Official Git Website](https://git-scm.com/)
+- **Git**
 
-- **Packwiz**  
-  [Packwiz GitHub Repository](https://github.com/packwiz/packwiz)
+- **Packwiz**
 
 ## Installation
 
@@ -39,4 +36,4 @@ PackFrameworker is a script that automates building and updating Minecraft modpa
 Run the script from the command line:
 
 ```bash
-python packframeworker.py
+python PackFrameworkerScript.py
