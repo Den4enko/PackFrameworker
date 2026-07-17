@@ -1,0 +1,13 @@
+name = "PackFrameworkerExample"
+author = "Den4enko"
+version = "v4"
+pack-format = "packwiz:1.1.0"
+
+[index]
+file = "index.toml"
+hash-format = "sha256"
+hash = "5c132c21fd50fa490f8b3387209a886453f1607e65be798e6b539aac5ff4b667"
+
+[versions]
+fabric = "0.16.10"
+minecraft = "1.20.1"
