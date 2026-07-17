@@ -48,7 +48,7 @@ jobs:
           echo "Target deployment directory: $DEPLOY_DIR"
 
       - name: Clone PackFramework base
-        run: git clone https://github.com/Den4enko/PackFramework framework
+        run: git clone https://github.com/Den4enko/PackFramework --branch gh-pages framework
 
       - name: Build modpack variants
         run: |
@@ -61,14 +61,8 @@ jobs:
             rm -rf "$output_dir"
             mkdir -p "$output_dir"
 
-            # Cumulative merge of base files from framework
-            cp -a framework/server/. "$output_dir/"
-            if [ "$variant" = "nano" ] || [ "$variant" = "giga" ]; then
-              cp -a framework/nano/. "$output_dir/"
-            fi
-            if [ "$variant" = "giga" ]; then
-              cp -a framework/giga/. "$output_dir/"
-            fi
+            # Copy base files from PackFramework release (already cumulative)
+            cp -a "framework/release/$variant/." "$output_dir/"
 
             # Cumulative merge of overrides from PackFrameworker
             if [ -d "./server" ]; then
