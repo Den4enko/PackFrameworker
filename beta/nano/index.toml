@@ -18,7 +18,7 @@ hash = "3a1c71d2011cac176e00697237148ee882393b19394374862f8025f129d4c5a2"
 
 [[files]]
 file = "config/bcc-common.toml"
-hash = "72dd231209bbb984722c6cfb432312d440335b43b5521eecb4647d0550b1eb50"
+hash = "3a72e83449cfa1415eeba5888922267c584d10a9e096e25b244e12a4215e1161"
 
 [[files]]
 file = "config/defaultoptions/keybindings.txt"
@@ -70,11 +70,11 @@ hash = "10e9fa55347dee0a247a757ab71c3c0cb3d574465679aee5497ff4a513b5efea"
 
 [[files]]
 file = "config/fancymenu/custom_locals/meta/en_us.local"
-hash = "5c4aa03b038367b4dc2e1f4231555eaa5b7855de8d49df82f470f4d3159affc3"
+hash = "ff9bf35b386dd44cb11f8bdb62f769f9836999c7f8bd7cdd51df4c9394358d8f"
 
 [[files]]
 file = "config/fancymenu/custom_locals/mod/en_us.local"
-hash = "949c58049051b328bcd2f5e61e669a783c33ec97b3352c381cbe9fbcce6ee221"
+hash = "f25ac1c917271f34d0a13c5115d5783c4cbbd69c343ca97ddce8b3bd3e6e5d57"
 
 [[files]]
 file = "config/fancymenu/customizablemenus.txt"
